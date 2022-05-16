@@ -42,7 +42,7 @@ def get_winners_answer(year):
 def getadj(name, tweet):
     stopwords = ["golden", "globes", "globe", "goldenglobes", "goldenglobe", "@", 'in', 'an', 'a', 'actress', 'actor',
             'motion', 'picture', 's', 'm', 't', 'best', 'i', 'mejor', 'el','é','o', 'n', "una","los","musical",
-            "original","lleva","para", "un", "se","much","many",'u',"por","solvej","premio"]  
+            "original","lleva","para", "un", "se","much","many",'u',"por","solvej","premio"]  #removing spanish stopwords as well
     stopwords.extend(name)
     tokens = wordpunct_tokenize(tweet)
     newtweet = [token for token in tokens if token.lower() not in stopwords]
@@ -104,7 +104,7 @@ def get_sentiment(year):
     return sentimentdictionary
                 				
 # get_sentiment(2013)
-# get_sentiment(2015)
+print(get_sentiment(2015))
 
 # def detectlang(text):
 #     @Language.factory("language_detector")
