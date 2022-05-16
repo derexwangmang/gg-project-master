@@ -5,30 +5,15 @@ import re
 from nltk import bigrams
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.util import everygrams
+from nltk.corpus import stopwords
 import Levenshtein
 import GenerateTweetsByAward as gtba
 from helpers.tweet_preprocessing import clean
 
 AWARD_STOP_WORDS = set(['by', 'an', 'in', 'a', 'performance', 'or', 'role', 'made', 'for', '-', ','])
-TWEET_STOP_WORDS = set(["the", "golden", "globes", "for", "to", "and"])
-
+TWEET_STOP_WORDS = set(["the", 'el', "golden", "globes", "for", "to", "and"])
+STOPWORDS = set(stopwords.words('english'))
 OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'best performance by an actress in a motion picture - drama', 'best performance by an actor in a motion picture - drama', 'best motion picture - comedy or musical', 'best performance by an actress in a motion picture - comedy or musical', 'best performance by an actor in a motion picture - comedy or musical', 'best animated feature film', 'best foreign language film', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director - motion picture', 'best screenplay - motion picture', 'best original score - motion picture', 'best original song - motion picture', 'best television series - drama', 'best performance by an actress in a television series - drama', 'best performance by an actor in a television series - drama', 'best television series - comedy or musical', 'best performance by an actress in a television series - comedy or musical', 'best performance by an actor in a television series - comedy or musical', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television']
-
-# Returns all tweet text from year in lowercase without stop words
-def get_tweets(year):
-    tweet_text_lst = []
-    with open('gg{}.json'.format(year), encoding='utf-8') as f:
-        tweet_information = json.load(f)
-        for tweet in tweet_information:
-            text_lst = word_tokenize(tweet["text"])
-            if text_lst[0].lower() == "rt":
-                # For "RT @Forever21: Oh, Adele", removes RT, @, Forever21, :
-                text_lst = text_lst[4:]
-
-            english_text_lst = [token for token in text_lst if token.isalpha() and token.lower() not in TWEET_STOP_WORDS]
-            tweet_text_lst.append(' '.join(english_text_lst))
-    
-    return tweet_text_lst
 
 # Returns dictionary mapping between KEY = clean name, VALUE = original name
 def get_filtered_awards(year):
@@ -41,12 +26,59 @@ def get_filtered_awards(year):
 
     return clean_awards
 
+# def get_winner(year):
+#     award_mappings = get_filtered_awards(year)
+#     clean_awards = award_mappings.keys()
+
+#     winners = {}
+
+#     def get_winner_award(year, award, clean_award):
+#         def goodgram(gram):
+#             for g in gram:
+#                 for sws in [award.split(' '), AWARD_STOP_WORDS, TWEET_STOP_WORDS, STOPWORDS]:
+#                     for w in sws:
+#                         if Levenshtein.ratio(g, w) >= 0.75:
+#                             return False
+#             return True
+
+#         with open('awardsandfilters/{}{}.txt'.format(re.sub("[^a-zA-Z]", "", award),year)) as f:
+#             all_tweets = f.readlines()
+
+#             names = {}
+#             for tweet in all_tweets:
+#                 sentences = sent_tokenize(tweet.lower())
+#                 for sentence in sentences:
+#                     if any(word in clean_award for word in ["actor", "actress", "director", "demille"]):
+#                         temp = list(filter(goodgram, bigrams(word_tokenize(sentence))))
+#                     else:
+#                         temp = list(filter(goodgram, everygrams(word_tokenize(sentence), max_len=3)))
+
+#                     for x in temp:
+#                         if x in names:
+#                             names[x] += 1
+#                         else:
+#                             names[x] = 1
+
+#             name = sorted(list(map(lambda x: [x, names[x]], names.keys())),\
+#                 key=lambda y: -y[1])[0][0]
+            
+#             winners[award] = ' '.join(name)
+
+#     for clean_award in clean_awards:
+#         get_winner_award(year, award_mappings[clean_award], clean_award)
+
+#     # print(winners)
+#     return winners    
+
+#######
+
 def get_winner(year):
-    gtba.generateTweetsByAward(year)
+    # gtba.generateTweetsByAward(year)
     award_mappings = get_filtered_awards(year)
     clean_awards = award_mappings.keys()
 
     potential_winners = {}
+
 
     def get_winner_award(year, award, clean_award):
         with open('awardsandfilters/{}{}.txt'.format(re.sub("[^a-zA-Z]", "", award),year)) as f:
@@ -72,7 +104,6 @@ def get_winner(year):
                         people_names.append([sentence[wins_index+6:], list(bigrams(tokens))])
                         other_names.append([sentence[wins_index+6:], list(everygrams(tokens, max_len=3))])
 
-                    # for award in clean_awards:
                     # People award, needs two names
                     if any(word in clean_award for word in ["actor", "actress", "director", "demille"]):
                         for potential_award, people_name in people_names:
@@ -133,8 +164,11 @@ def get_winner(year):
 
         # print("\n")
 
-    # print(winners)
+    print(winners)
     return winners    
+
+
+###########
         
 # def get_winner(year):
 #     award_mappings = get_filtered_awards(year)
