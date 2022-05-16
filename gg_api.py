@@ -3,7 +3,7 @@ import re
 from collections import Counter
 import helpers.awards
 import awards
-# import helpers.winners
+import helpers.winners
 import helpers.winners_given_nominees
 
 from nltk.corpus import stopwords as sw
@@ -66,7 +66,7 @@ def get_winner(year):
     Do NOT change the name of this function or what it returns.'''
     # Your code here
     print("Starting get winners for year={}".format(year))
-    return helpers.winners_given_nominees.get_winner(year)
+    return helpers.winners.get_winner(year)
 
 def get_presenters(year):
     '''Presenters is a dictionary with the hard coded award
