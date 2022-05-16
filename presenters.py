@@ -35,8 +35,6 @@ def get_presenters(year):
         pattern2 = re.search("[A-Z]([a-z]+|\.)(?:\s+[A-Z]([a-z]+|\.))*(?:\s+[A-Z][a-z\-]+){0,1}\s+[A-Z]([a-z]+|\.)", tweet)
         pattern3 = re.search(r'\bbest\s+([^.!?@:#-]*)', tweet, re.IGNORECASE)
         presenters = []
-        if "Halle Berry" in tweet:
-            print(tweet)
         if pattern1 and pattern3:
             name1 = pattern1.group(1) + ' ' + pattern1.group(2)
             name2 = pattern1.group(4) + ' ' + pattern1.group(5)
@@ -45,7 +43,7 @@ def get_presenters(year):
         elif pattern2 and pattern3:
             name1 = pattern2.group(0)
             name2 = pattern2.group(2)
-            check = [word for word in name1 if word.lower() in nltk_stop_words or word.lower() in award_stop_words]
+            check = [word for word in name1.split() if word.lower() in award_stop_words and word.lower() in nltk_stop_words]
             if not check:
                 presenters.append(name1)
         if presenters:
@@ -68,7 +66,7 @@ def get_presenters(year):
                         awards[mapping][presenter] = 1
 
     result = dict.fromkeys(OFFICIAL_AWARDS,None)
-    print(awards)
+    #print(awards)
     for key in awards:
         #print(awards[key])
         if awards[key]:
