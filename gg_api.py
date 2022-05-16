@@ -3,12 +3,21 @@ import re
 from collections import Counter
 import helpers.awards
 import awards
+<<<<<<< HEAD
 # import helpers.winners
 import helpers.winners_given_nominees
+=======
+import helpers.winners
+import presenters
+import helpers.winners_given_nominees
+
+import helpers.nominees
+>>>>>>> c4be7af935c13ced9b68a8dafb9aa29362948616
 
 from nltk.corpus import stopwords as sw
 from nltk.tokenize import wordpunct_tokenize
 from nltk.sentiment import SentimentIntensityAnalyzer
+import helpers.tweet_preprocessing as TP
 
 OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'best performance by an actress in a motion picture - drama', 'best performance by an actor in a motion picture - drama', 'best motion picture - comedy or musical', 'best performance by an actress in a motion picture - comedy or musical', 'best performance by an actor in a motion picture - comedy or musical', 'best animated feature film', 'best foreign language film', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director - motion picture', 'best screenplay - motion picture', 'best original score - motion picture', 'best original song - motion picture', 'best television series - drama', 'best performance by an actress in a television series - drama', 'best performance by an actor in a television series - drama', 'best television series - comedy or musical', 'best performance by an actress in a television series - comedy or musical', 'best performance by an actor in a television series - comedy or musical', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television']
 
@@ -18,14 +27,7 @@ def tokenize(text):
     return [t.lower() for t in wordpunct_tokenize(text)]
 
 def get_tweets(year):
-    with open('gg{}.json'.format(year)) as f:
-        tweet_information = json.load(f)
-
-        tweet_text_lst = []
-        for tweet in tweet_information:
-            tweet_text_lst.append(tweet['text'])
-
-    return tweet_text_lst
+    return TP.get_tweets(year)
 
 def get_hosts(year):
     '''Hosts is a list of one or more strings. Do NOT change the name
@@ -58,7 +60,8 @@ def get_nominees(year):
     names as keys, and each entry a list of strings. Do NOT change
     the name of this function or what it returns.'''
     # Your code here
-    return {}
+    print("Starting get_nominees for year={}".format(year))
+    return helpers.nominees.get_nominees(year)
 
 def get_winner(year):
     '''Winners is a dictionary with the hard coded award
@@ -66,7 +69,7 @@ def get_winner(year):
     Do NOT change the name of this function or what it returns.'''
     # Your code here
     print("Starting get winners for year={}".format(year))
-    return helpers.winners_given_nominees.get_winner(year)
+    return helpers.winners.get_winner(year)
 
 def get_presenters(year):
     '''Presenters is a dictionary with the hard coded award
@@ -98,6 +101,8 @@ def pre_ceremony():
     plain text file. It is the first thing the TA will run when grading.
     Do NOT change the name of this function or what it returns.'''
     # Your code here
+    TP.get_tweets(2013)
+    TP.get_tweets(2015)
     print("Pre-ceremony processing complete.")
     return
 
@@ -114,4 +119,5 @@ def main():
 
 
 if __name__ == '__main__':
+    pre_ceremony()
     main()
