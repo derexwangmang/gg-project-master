@@ -32,4 +32,5 @@ def bestdressed(year):
     result = bestdressedperson + " was the best dressed! " + worstdressedperson + " was the worst dressed!"
     return result
 
-print(bestdressed(2015))
+# bestdressed(2013)
+# bestdressed(2015)
