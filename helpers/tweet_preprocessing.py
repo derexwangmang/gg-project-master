@@ -19,7 +19,7 @@ def get_tweets(year):
     if exists('processedtweets{}.txt'.format(year)):
         return open('processedtweets{}.txt'.format(year)).readlines()
 
-
+    noDuplicates = set()
     with open('./gg{}.json'.format(year)) as f:
         tweet_information = json.load(f)
 
@@ -28,12 +28,34 @@ def get_tweets(year):
         for tweet in tweet_information:
             tweet = tweet['text']
             tweet = clean(tweet)
+            if tweet in noDuplicates:
+                continue
+            noDuplicates.add(tweet)
             tweet_text_lst.append(tweet)
 
+    filteredTweets = {}
+    with open('awardsandfilters/awardsandfilters.txt') as f:
+        lines = f.readlines()
+        for l in lines:
+            arr = l.split(';')
+            category = arr[0]
+            posfilters = arr[1][:-1] if len(arr) <= 2 else arr[1]
+            posfilters = re.compile("^(?=.*" + ")(?=.*".join(posfilters.split(',')) + ").*$", re.IGNORECASE)
+            filteredTweets[category] = [posfilters, []]
+
     f = open('./processedtweets{}.txt'.format(year), 'w')
+
     for i, tweet in enumerate(tweet_text_lst):
         tweet_text_lst[i] = secondClean(tweet_text_lst[i])
         f.write(tweet_text_lst[i] + '\n')
+        for key in filteredTweets:
+            if re.search(filteredTweets[key][0], tweet_text_lst[i]):
+                filteredTweets[key][1].append(tweet_text_lst[i])
+    
+    for key in filteredTweets:
+        with open('awardsandfilters/{}{}.txt'.format(re.sub("[^a-zA-Z]", "", key), year), 'w') as f:
+            for item in filteredTweets[key][1]:
+                f.write("%s\n" % item)
 
     return tweet_text_lst
 
