@@ -1,0 +1,12 @@
+Expected Results
+
+# Winners
+Naive implementation: 4:30.80 total
+Starting get winners for year=2013
+Starting get winners for year=2015
+{'2013': {'winner': {'spelling': 0.5082417582417583}},
+ '2015': {'winner': {'spelling': 0.3589743589743589}}}
+
+Provided candidate list (nominees and winner): 4:46.58 total
+{'2013': {'winner': {'spelling': 0.8461538461538461}},
+ '2015': {'winner': {'spelling': 0.9615384615384616}}}

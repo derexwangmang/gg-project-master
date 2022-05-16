@@ -40,17 +40,10 @@ def get_tweets(year):
 def secondClean(text):
     text = separateHashtags(text)
     text = fixMentions(text)
-
-    ''' 
-    this next line surrounds every punctuation and other 'useless' character with spaces
-    this would let a dumber algorithm match names or other keywords better, and furthermore
-    i dont think we care about punctuation (doing this wouldn't affect anything, right?)
-
-    e.g. "Leo DiCaprio's" => "Leo DiCaprio ' s"
-    '''
-    text = re.sub('(\'s\s*)', ' \1', text) 
-    text = re.sub('([^a-zA-Z0-9\s])', '', text)
-     
+    # text = re.sub('(\'s\s*)', ' \1', text) 
+    text = re.sub('([^a-zA-Z0-9\s\'])', ' ', text)
+    text = re.sub('(\se\s)+', ' ', text)
+    
 
     text = re.sub('\s+', ' ', text)
     if re.match('\s+', text):

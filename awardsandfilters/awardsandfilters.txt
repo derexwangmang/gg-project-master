@@ -1,0 +1,26 @@
+cecil b. demille award;cecil
+best performance by an actress in a supporting role in a motion picture;supporting,actres,motion pic
+best performance by an actor in a supporting role in a motion picture;supporting,actor,motion pic
+best performance by an actress in a motion picture - comedy or musical;actres,comedy|musical;support,drama
+best performance by an actor in a motion picture - comedy or musical;actor,comedy|musical;support,drama
+best performance by an actress in a motion picture - drama;actres,motion,pic;support,comedy,musical
+best performance by an actor in a motion picture - drama;actor,motion,pic;support,comedy,musical
+best director - motion picture;direct,motion picture;actor,actres
+best screenplay - motion picture;screenplay|screen play;actor,actres,direc,score,song
+best original score - motion picture;score,motion,pic;actor,actres,direct,song,screenplay|screen,play
+best original song - motion picture;song,motion,pic;actor,actres,direct,score,screenplay|screen,play
+best motion picture - comedy or musical;motion,pic,comedy|musical;actor,actres,direct,score,screenplay|screen play,song,drama
+best motion picture - drama;best motion pic,drama;actor,actres,direct,score,screenplay|screen play,comedy,musical
+best animated feature film;animated,film
+best foreign language film;foreign,film
+best performance by an actress in a supporting role in a series, mini-series or motion picture made for television;supporting actres,series|motion pic,television|TV
+best performance by an actor in a supporting role in a series, mini-series or motion picture made for television;supporting actor,series|motion pic,television|TV
+best performance by an actress in a mini-series or motion picture made for television;actres,series|motion pic,television|TV;support
+best performance by an actor in a mini-series or motion picture made for television;actor,series|motion pic,television|TV;support
+best performance by an actress in a television series - comedy or musical;actres,television|TV,comedy|musical;support,drama
+best performance by an actor in a television series - comedy or musical;actor,television|TV,comedy|musical;support,drama
+best performance by an actress in a television series - drama;actres,television|TV,drama;support,comedy|musical
+best performance by an actor in a television series - drama;actor,television|TV,drama;support,comedy|musical
+best mini-series or motion picture made for television;series|motion pic,television|TV;actor,actres
+best television series - comedy or musical;television|TV,comedy|musical;actor,actres,drama
+best television series - drama;television|TV,drama;actor,actres,comedy|music
