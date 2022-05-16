@@ -3,16 +3,11 @@ import re
 from collections import Counter
 import helpers.awards
 import awards
-<<<<<<< HEAD
-# import helpers.winners
-import helpers.winners_given_nominees
-=======
 import helpers.winners
 import presenters
 import helpers.winners_given_nominees
 
 import helpers.nominees
->>>>>>> c4be7af935c13ced9b68a8dafb9aa29362948616
 
 from nltk.corpus import stopwords as sw
 from nltk.tokenize import wordpunct_tokenize
