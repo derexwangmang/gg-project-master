@@ -13,6 +13,8 @@ from nltk.corpus import stopwords
 AWARD_STOP_WORDS = set(['by', 'an', 'in', 'a', 'performance', 'or', 'role', 'made', 'for', '-', ','])
 TWEET_STOP_WORDS = set(stopwords.words('english'))
 TWEET_STOP_WORDS.update(["the", "golden", "globes", "for", "to", "and"])
+TWEET_STOP_WORDS.remove("should")
+TWEET_STOP_WORDS.remove("of")
 
 OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'best performance by an actress in a motion picture - drama', 'best performance by an actor in a motion picture - drama', 'best motion picture - comedy or musical', 'best performance by an actress in a motion picture - comedy or musical', 'best performance by an actor in a motion picture - comedy or musical', 'best animated feature film', 'best foreign language film', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director - motion picture', 'best screenplay - motion picture', 'best original score - motion picture', 'best original song - motion picture', 'best television series - drama', 'best performance by an actress in a television series - drama', 'best performance by an actor in a television series - drama', 'best television series - comedy or musical', 'best performance by an actress in a television series - comedy or musical', 'best performance by an actor in a television series - comedy or musical', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television']
 
@@ -59,8 +61,11 @@ def get_nominees(year):
                 # print(word_tokenize(clean_award))
                 tweet = ' '.join([token for token in word_tokenize(tweet) if token.lower() not in TWEET_STOP_WORDS and token.lower() not in set(word_tokenize(clean_award))])
                 # Filter out tweets talking about winner
-                if 'winner' in tweet or "wins" in tweet or "goes" in tweet:
-                    continue
+                # if 'winner' in tweet or "wins" in tweet or "goes" in tweet or "won" in tweet:
+                # print("TWEET", tweet)
+                # if 'should' not in tweet or 'wish' not in tweet or 'nom' not in tweet or 'robbed' not in tweet:
+                    # break
+                # print("PASSED FILTER")
                 # print("CLEAN AWARD: ", clean_award)
                 # print("NEW TWEET={}".format(tweet))
                 sentences = sent_tokenize(tweet)
@@ -145,12 +150,15 @@ def get_nominees(year):
             # print("nominee Candidates for AWARD={}, CHOSE={}".format(collapsed_potential_nominees[award].most_common(10), collapsed_potential_nominees[award].most_common(1)[0][0]))
             nominees[award_name] = []
             previous_count = -1
-            for nominee in collapsed_potential_nominees[award].most_common():
-                if previous_count > nominee[1] * 2 or len(nominees) > 5:
-                    break
-
+            for nominee in collapsed_potential_nominees[award].most_common(4):
                 nominees[award_name].append(nominee[0])
-                previous_count = nominee[1]
+                # if len(nominees) < 5:
+                #     nominees[award_name].append(nominee[0])
+                
+                # if previous_count > nominee[1] * 2 or len(nominees) > 5:
+                #     break
+                
+                # previous_count = nominee[1]
             # nominees[award_name] = [collapsed_potential_nominees[award].most_common(1)[0][0]]
         else:
             nominees[award_name] = ["Not found"]
