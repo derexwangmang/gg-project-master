@@ -5,6 +5,7 @@ import helpers.awards
 import awards
 # import helpers.winners
 import helpers.winners_given_nominees
+import helpers.nominees
 
 from nltk.corpus import stopwords as sw
 from nltk.tokenize import wordpunct_tokenize
@@ -58,14 +59,15 @@ def get_nominees(year):
     names as keys, and each entry a list of strings. Do NOT change
     the name of this function or what it returns.'''
     # Your code here
-    return {}
+    print("Starting get_nominees for year={}".format(year))
+    return helpers.nominees.get_nominees(year)
 
 def get_winner(year):
     '''Winners is a dictionary with the hard coded award
     names as keys, and each entry containing a single string.
     Do NOT change the name of this function or what it returns.'''
     # Your code here
-    print("Starting get winners for year={}".format(year))
+    print("Starting get_winner for year={}".format(year))
     return helpers.winners_given_nominees.get_winner(year)
 
 def get_presenters(year):
