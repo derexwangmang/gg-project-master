@@ -176,5 +176,5 @@ def get_nominees(year):
 
         # print("\n")
 
-    print("Nominees found ", nominees)
+    # print("Nominees found ", nominees)
     return nominees
