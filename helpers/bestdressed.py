@@ -30,8 +30,7 @@ def bestdressed(year):
     for (key,value) in worstdressed.most_common(1):
         worstdressedperson = key
 
-    result = bestdressedperson + " was the best dressed! " + worstdressedperson + " was the worst dressed! in " + str(year)
-    return result
+    return [bestdressedperson, worstdressedperson]
 
 # bestdressed(2013)
 # bestdressed(2015)
