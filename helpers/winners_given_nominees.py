@@ -1,6 +1,6 @@
 import json
 from collections import Counter
-from re import A
+import re
 from nltk import bigrams
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.util import everygrams
@@ -52,92 +52,113 @@ def get_candidates(year):
 
 
 def get_winner(year):
+    # gtba.generateTweetsByAward(year)
     award_mappings = get_filtered_awards(year)
     clean_awards = award_mappings.keys()
-    
+
     potential_winners = {}
-    for clean_award in clean_awards:
-        potential_winners[clean_award] = Counter()
 
     candidates = get_candidates(year)
     awards_to_candidates = {}
     for clean_award in clean_awards:
         awards_to_candidates[clean_award] = candidates[award_mappings[clean_award]]
 
-    # print("AWARDS TO CANDIDATES")
-    # print(awards_to_candidates)
+    def get_winner_award(year, award, clean_award):
+        with open('awardsandfilters/{}{}.txt'.format(re.sub("[^a-zA-Z]", "", award),year)) as f:
+            all_tweets = f.readlines()
 
-    all_tweets = get_tweets(year)
-    # all_tweets = ["Jodie Fostor wins the cecil b. demille award.", "Argo wins the best motion picture in drama. Jennifer Lawrence wins the best actress performance in a motion picture drama."]
-    # all_tweets = ["John Doe wins the cecil b. demille award.", "John Doe wins the cecil b. demille award.", "Johnny Doe wins the cecil b. demille award."]
-    for tweet in all_tweets:
-        sentences = sent_tokenize(tweet)
-        people_names = []
-        other_names = []
-        for sentence in sentences:
-            # print("NOW PARSING={}".format(sentence))
-            # Start until key word
-            won_index = sentence.find(' won ')
-            if won_index != -1:
-                tokens = word_tokenize(sentence[:won_index])
-                people_names.append([sentence[won_index+5:], list(bigrams(tokens))])
-                other_names.append([sentence[won_index+5:], list(everygrams(tokens, max_len=3))])
+            for tweet in all_tweets:
+                sentences = sent_tokenize(tweet)
+                people_names = []
+                other_names = []
+                for sentence in sentences:
+                    # print("NOW PARSING={}".format(sentence))
+                    # Start until key word
+                    won_index = sentence.find(' won ')
+                    if won_index != -1:
+                        tokens = word_tokenize(sentence[:won_index])
+                        people_names.append([sentence[won_index+5:], list(bigrams(tokens))])
+                        other_names.append([sentence[won_index+5:], list(everygrams(tokens, max_len=3))])
+                    
+                    wins_index = sentence.find(' wins ')
+                    if wins_index != -1:
+                        tokens = word_tokenize(sentence[:wins_index])
+                        people_names.append([sentence[wins_index+6:], list(bigrams(tokens))])
+                        other_names.append([sentence[wins_index+6:], list(everygrams(tokens, max_len=5))])
 
+                    all_bigrams = ([], list(bigrams(word_tokenize(sentence))))
+                    people_names.append(all_bigrams)
+
+                    all_grams = ([], list(everygrams(word_tokenize(sentence), max_len = 3)))
+                    other_names.append(all_grams)
+
+                    # People award, needs two names
+                    if any(word in clean_award for word in ["actor", "actress", "director", "demille"]):
+                        for potential_award, people_name in people_names:
+                            # filtered_potential_award = ' '.join([token for token in word_tokenize(potential_award) if token not in AWARD_STOP_WORDS])
+                            # print("AWARD={}, POTENTIAL_AWARD={}, RATIO={}, PEOPlE_NAME={}".format(award, filtered_potential_award, Levenshtein.ratio(award, filtered_potential_award), people_name))
+                            # if Levenshtein.ratio(clean_award, filtered_potential_award) >= 0.6:
+                            for gram in people_name:
+                                phrase = ' '.join(gram)
+                                phrase = phrase.lower()
+                                for candidate in awards_to_candidates[clean_award]:
+                                    if Levenshtein.ratio(candidate, phrase) >= 0.6:
+                                        potential_winners[clean_award][candidate] = potential_winners[clean_award].get(candidate, 0) + 1
+                    else:
+                        for potential_award, other_name in other_names:
+                            # filtered_potential_award = ' '.join([token for token in word_tokenize(potential_award) if token not in AWARD_STOP_WORDS])
+                            # print("AWARD={}, POTENTIAL_AWARD={}, RATIO={}".format(award, filtered_potential_award, Levenshtein.ratio(award, filtered_potential_award)))
+                            # if Levenshtein.ratio(clean_award, filtered_potential_award) >= 0.6:
+                            if clean_award == 'best actor supporting series mini-series motion picture television':
+                                    print("PHRASE={}".format(phrase))
+                            for gram in other_name:
+                                phrase = ' '.join(gram)
+                                phrase = phrase.lower()
+                                for candidate in awards_to_candidates[clean_award]:
+                                    if Levenshtein.ratio(candidate, phrase) >= 0.6:
+                                            potential_winners[clean_award][candidate] = potential_winners[clean_award].get(candidate, 0) + 1
+
+    for clean_award in clean_awards:
+        # print(clean_award)
+        potential_winners[clean_award] = Counter()
+        get_winner_award(year, award_mappings[clean_award], clean_award)
+
+    collapsed_potential_winners = {}
+    for clean_award in clean_awards:
+        collapsed_potential_winners[clean_award] = Counter()
+    
+    for award in clean_awards:
+        for potential_winner in potential_winners[award].keys():
+            # print("Potential winner: ", potential_winner)
+            added = False
             
-            wins_index = sentence.find(' wins ')
-            if wins_index != -1:
-                tokens = word_tokenize(sentence[:wins_index])
-                people_names.append([sentence[wins_index+6:], list(bigrams(tokens))])
-                other_names.append([sentence[wins_index+6:], list(everygrams(tokens, max_len=3))])
+            for collapsed_potential_winner in collapsed_potential_winners[award].keys():
+                # print("POTENTIAL WINNER={}, COLLAPSED={}".format(potential_winner, collapsed_potential_winner))
+                # print("CURRENT FREQ COUNT: ", collapsed_potential_winners[award][potential_winner])
+                if Levenshtein.ratio(collapsed_potential_winner, potential_winner) >= 0.8:
+                    # print("Ratio > 0.6")
+                    collapsed_potential_winners[award][collapsed_potential_winner] += 1
+                    added = True
             
-            # print("PEOPLE NAMES: ", people_names)
-            # print("OTHER NAMES: ", other_names)
-            
-            # Start after key word
-
-        for award in clean_awards:
-            # People award, needs two names
-            if any(word in award for word in ["actor", "actress", "director", "demille"]):
-                for potential_award, people_name in people_names:
-                    filtered_potential_award = ' '.join([token for token in word_tokenize(potential_award) if token not in AWARD_STOP_WORDS])
-                    # print("AWARD={}, POTENTIAL_AWARD={}, RATIO={}, PEOPlE_NAME={}".format(award, filtered_potential_award, Levenshtein.ratio(award, filtered_potential_award), people_name))
-                    if Levenshtein.ratio(award, filtered_potential_award) >= 0.6:
-                        for gram in people_name:
-                            phrase = ' '.join(gram)
-                            phrase = phrase.lower()
-                            for candidate in awards_to_candidates[award]:
-                                if Levenshtein.ratio(candidate, phrase) >= 0.6:
-                                    potential_winners[award][candidate] = potential_winners[award].get(candidate, 0) + 1
-            else:
-                for potential_award, other_name in other_names:
-                    filtered_potential_award = ' '.join([token for token in word_tokenize(potential_award) if token not in AWARD_STOP_WORDS])
-                    # print("AWARD={}, POTENTIAL_AWARD={}, RATIO={}".format(award, filtered_potential_award, Levenshtein.ratio(award, filtered_potential_award)))
-                    if Levenshtein.ratio(award, filtered_potential_award) >= 0.6:
-                        for gram in other_name:
-                            phrase = ' '.join(gram)
-                            phrase = phrase.lower()
-                            for candidate in awards_to_candidates[award]:
-                                if Levenshtein.ratio(candidate, phrase) >= 0.6:
-                                    potential_winners[award][candidate] = potential_winners[award].get(candidate, 0) + 1
-
-    # print(potential_winners)
+            if not added:
+                collapsed_potential_winners[award][potential_winner] = potential_winners[award][potential_winner]
+                # print("Added: ", collapsed_potential_winners[award])
+    
     winners = {}
     for award in clean_awards:
         award_name = award_mappings[award]
         # print("AWARD NAME={}".format(award_name))
-        if len(potential_winners[award]) > 0:
+        if len(collapsed_potential_winners[award]) > 0:
             # print("Winner Candidates for AWARD={}, CHOSE={}".format(potential_winners[award].most_common(10), potential_winners[award].most_common(1)[0][0]))
-            winners[award_name] = potential_winners[award].most_common(1)[0][0]
+            # winners[award_name] = potential_winners[award].most_common(1)[0][0]
 
             # print("Winner Candidates for AWARD={}, CHOSE={}".format(collapsed_potential_winners[award].most_common(10), collapsed_potential_winners[award].most_common(1)[0][0]))
-            # winners[award_name] = collapsed_potential_winners[award].most_common(1)[0][0]
+            winners[award_name] = collapsed_potential_winners[award].most_common(1)[0][0]
         else:
             winners[award_name] = "Not found"
 
         # print("\n")
 
-    # print(winners)
+    # for award in winners.keys():
+        # print("AWARD={}, WINNER={}".format(award, winners[award]))
     return winners
-
-
-# get_winner('2013')

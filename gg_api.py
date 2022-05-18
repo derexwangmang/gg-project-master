@@ -1,6 +1,6 @@
 import helpers.hosts
 import helpers.awards
-import helpers.winners
+import helpers.winners_given_nominees
 import helpers.presenters
 import helpers.nominees
 import helpers.bestdressed
@@ -40,7 +40,7 @@ def get_winner(year):
     names as keys, and each entry containing a single string.
     Do NOT change the name of this function or what it returns.'''
     print("Starting get_winners for year={}".format(year))
-    return helpers.winners.get_winner(year)
+    return helpers.winners_given_nominees.get_winner(year)
 
 def get_presenters(year):
     '''Presenters is a dictionary with the hard coded award
