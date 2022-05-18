@@ -104,7 +104,7 @@ def get_filtered_awards(year):
         clean_awards[' '.join(filtered_text_lst)] = award
     return clean_awards
 
-def get_presenters_2(year):
+""" def get_presenters_2(year):
     presenters_tweets = []
     presenter_pattern = re.compile('present')
     tweets_containing_present = list(filter(presenter_pattern.search, get_tweets(year)))
@@ -167,18 +167,9 @@ def map_presenters(year, presenters):
             result[key] = res
         else:
             result[key] = []
-    return result
+    return result """
                 
 
 
             
    
-
-
-<<<<<<< HEAD
-print(get_presenters(2013))
-=======
-#get_presenters(2013, {})
->>>>>>> eeef188cda6e37ec5a5743b4ba3e40af45b540c4
-#map_presenters(2013)
-#get_presenters_1(2013)
