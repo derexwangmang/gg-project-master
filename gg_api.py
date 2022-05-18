@@ -4,6 +4,7 @@ import helpers.winners
 import helpers.presenters
 import helpers.nominees
 import helpers.bestdressed
+import helpers.sentiment
 
 from nltk.sentiment import SentimentIntensityAnalyzer
 import helpers.tweet_preprocessing as TP
@@ -53,17 +54,7 @@ def get_presenters(year):
     return helpers.presenters.get_presenters(year)
 
 def sentiment(year):
-    sia = SentimentIntensityAnalyzer()
-    siaps = sia.polarity_scores("Wow, NLTK is really powerful!")
-    # print(siaps)
-
-    def is_positive(tweet: str) -> bool:
-        """True if tweet has positive compound sentiment, False otherwise."""
-        return sia.polarity_scores(tweet)["compound"] > 0
-
-    # for tweet in tweets:
-    #     print(">", is_positive(tweet), tweet)
-    return sentiment
+    return helpers.sentiment.get_sentiment(year)
 
 def bestdressed(year):
     return helpers.bestdressed.bestdressed(year)
