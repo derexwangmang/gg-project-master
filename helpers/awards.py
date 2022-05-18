@@ -1,24 +1,13 @@
-import json
 import re
 import nltk
 from collections import Counter
 
-# Returns all tweet text from year in lowercase
-def get_tweets(year):
-    with open('gg{}.json'.format(year)) as f:
-        tweet_information = json.load(f)
-
-        tweet_text_lst = []
-        for tweet in tweet_information:
-            tweet_text_lst.append(tweet['text'].lower())
-
-    return tweet_text_lst
-
 # Gets the awards for a given year
-def get_awards(year):
+def get_awards(tweets):
+    tweets = [tweet.lower() for tweet in tweets]
     # Scanning forward words
     won_pattern = re.compile('got|won|wins|is awarded')
-    tweets_containing_won = list(filter(won_pattern.search, get_tweets(year)))
+    tweets_containing_won = list(filter(won_pattern.search, tweets))
 
     best_pattern = re.compile(r'\bbest\s+([^.!?@]*)')
     tweets_containing_best = list(filter(best_pattern.search, tweets_containing_won))
@@ -47,7 +36,7 @@ def get_awards(year):
 
     # Scanning backwards
     won_pattern = re.compile('goes to|receive[sd]')
-    tweets_containing_won = list(filter(won_pattern.search, get_tweets(year)))
+    tweets_containing_won = list(filter(won_pattern.search, tweets))
 
     best_pattern = re.compile(r'\bbest\s+.*([goes to|receive[sd]]*)')
     tweets_containing_best = list(filter(best_pattern.search, tweets_containing_won))

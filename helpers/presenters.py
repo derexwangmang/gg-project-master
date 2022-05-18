@@ -1,10 +1,11 @@
 import json
 import re
-import nltk
 from collections import Counter
 from nltk.corpus import stopwords
 from difflib import SequenceMatcher
+from nltk.tokenize import word_tokenize, sent_tokenize
 import Levenshtein
+
 
 award_stop_words = set(['by', 'an', 'in', 'a', 'performance', 'or', 'role', 'made', 'for', '-', ',','is','best'])
 nltk_stop_words = set(stopwords.words('english'))
@@ -24,10 +25,11 @@ def get_tweets(year):
     return tweet_text_lst
 
 def get_presenters(year):
-    print("running")
     presenter_pattern = re.compile('present')
     tweets_containing_present = list(filter(presenter_pattern.search, get_tweets(year)))
     awards = dict.fromkeys(OFFICIAL_AWARDS, None)
+    award_mappings = get_filtered_awards(year)
+    clean_awards = list(award_mappings.keys())
     for tweet in tweets_containing_present:
         #if re.search("([A-Za-z]+[\s-]?[A-Za-z]+(and)?)+\spresent", tweet):
         #if re.search(" [A-Z]([a-z]+|\.)(?:\s+[A-Z]([a-z]+|\.))*(?:\s+[a-z][a-z\-]+){0,1}\s+[A-Z]([a-z]+|\.)", tweet):
@@ -42,43 +44,65 @@ def get_presenters(year):
             presenters.append(name2)
         elif pattern2 and pattern3:
             name1 = pattern2.group(0)
-            name2 = pattern2.group(2)
-            check = [word for word in name1.split() if word.lower() in award_stop_words and word.lower() in nltk_stop_words]
+            check = [word for word in name1.split() if word.lower() in award_stop_words or word.lower() in nltk_stop_words]
             if not check:
                 presenters.append(name1)
         if presenters:
             highest = 0
             mapping = ''
-            for award in OFFICIAL_AWARDS:
-                seq = SequenceMatcher(None, award, pattern3.group(0))
-                ratio = seq.ratio()
-                #ratio = Levenshtein.ratio(award,pattern3.group(0))
+            scores = {}
+            p3 = pattern3.group(0)
+            for award in clean_awards:
+                #seq = SequenceMatcher(None, award, pattern3.group(0))
+                #ratio = seq.ratio()
+                ratio = Levenshtein.ratio(award,p3)
+                scores[award_mappings[award]] = ratio
                 if ratio > highest:
                     highest = ratio
                     mapping = award
             if highest >= .4:
                 for presenter in presenters:
-                    if not awards[mapping]:
-                        awards[mapping] = Counter()
-                    if presenter in awards[mapping]:
-                        awards[mapping][presenter] += 1
+                    if not awards[award_mappings[mapping]]:
+                        awards[award_mappings[mapping]] = Counter()
+                    if presenter in awards[award_mappings[mapping]]:
+                        awards[award_mappings[mapping]][presenter] += 1
                     else:
-                        awards[mapping][presenter] = 1
-
+                        awards[award_mappings[mapping]][presenter] = 1
     result = dict.fromkeys(OFFICIAL_AWARDS,None)
     #print(awards)
+    seen = []
     for key in awards:
         #print(awards[key])
         if awards[key]:
-            targets = awards[key].most_common(2)
-            res = []
-            for i in targets:
-                res.append(i[0])
+            targets = list(awards[key].items())
+            targets.sort(key = lambda tup: tup[1], reverse=True)
+            #print(key, targets)
+            res = [targets.pop(0)[0]]
+            count = 1
+            while count > 0 and targets:
+                potential = targets.pop(0)[0]
+                if Levenshtein.ratio(res[-1],potential) > .5:
+                    continue
+                else:
+                    if potential in seen and len(targets) >= 1:
+                        continue
+                    else:
+                        res.append(potential)
+                        count -= 1
             result[key] = res
+            seen += res
         else:
             result[key] = []
+    #print(result)
     return result
 
+def get_filtered_awards(year):
+    clean_awards = {}
+    for award in OFFICIAL_AWARDS:
+        text_lst = word_tokenize(award)
+        filtered_text_lst = [token for token in text_lst if token not in award_stop_words]
+        clean_awards[' '.join(filtered_text_lst)] = award
+    return clean_awards
 
 def get_presenters_2(year):
     presenters_tweets = []

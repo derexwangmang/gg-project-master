@@ -1,54 +1,32 @@
-import json
-import re
-from collections import Counter
+import helpers.hosts
 import helpers.awards
-import awards
 import helpers.winners
-import presenters
-import helpers.winners_given_nominees
-
+import helpers.presenters
 import helpers.nominees
+import helpers.bestdressed
 
-from nltk.corpus import stopwords as sw
-from nltk.tokenize import wordpunct_tokenize
 from nltk.sentiment import SentimentIntensityAnalyzer
 import helpers.tweet_preprocessing as TP
 
 OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'best performance by an actress in a motion picture - drama', 'best performance by an actor in a motion picture - drama', 'best motion picture - comedy or musical', 'best performance by an actress in a motion picture - comedy or musical', 'best performance by an actor in a motion picture - comedy or musical', 'best animated feature film', 'best foreign language film', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director - motion picture', 'best screenplay - motion picture', 'best original score - motion picture', 'best original song - motion picture', 'best television series - drama', 'best performance by an actress in a television series - drama', 'best performance by an actor in a television series - drama', 'best television series - comedy or musical', 'best performance by an actress in a television series - comedy or musical', 'best performance by an actor in a television series - comedy or musical', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television']
 
-stopwords = sw.words("english")
-
-def tokenize(text):
-    return [t.lower() for t in wordpunct_tokenize(text)]
-
 def get_tweets(year):
     return TP.get_tweets(year)
+
+TWEETS = {'2013': get_tweets(2013), '2015': get_tweets(2015)}
 
 def get_hosts(year):
     '''Hosts is a list of one or more strings. Do NOT change the name
     of this function or what it returns.'''
-    host_discussion_pattern = re.compile('hosted|hosting')
-    host_relevant_tweets = list(filter(host_discussion_pattern.search, get_tweets(year)))
-
-    host_multiple_names_pattern = re.compile('[A-Z][a-z]+ [A-Z][a-z]+ (and|&) [A-Z][a-z]+ [A-Z][a-z]+')
-    host_mention_tweets = list(filter(host_multiple_names_pattern.search, host_relevant_tweets))
-
-    host_name_pattern = re.compile('[A-Z][a-z]+ [A-Z][a-z]+')
-    host_names = Counter()
-    for tweet in host_mention_tweets:
-        potential_names = host_name_pattern.findall(tweet)
-        host_names.update(potential_names)
-    hosts = []
-    lstofhosts = host_names.most_common(2)
-    for n,f in lstofhosts:
-        hosts.append(n)
-    return hosts
+    print("Starting get_hosts for year={}".format(year))
+    return helpers.hosts.get_hosts(TWEETS[year])
 
 def get_awards(year):
     '''Awards is a list of strings. Do NOT change the name
     of this function or what it returns.'''
     # Your code here
-    return awards.get_award(year) 
+    print("Starting get_awards for year={}".format(year))
+    return helpers.awards.get_awards(TWEETS[year]) 
 
 def get_nominees(year):
     '''Nominees is a dictionary with the hard coded award
@@ -63,7 +41,7 @@ def get_winner(year):
     names as keys, and each entry containing a single string.
     Do NOT change the name of this function or what it returns.'''
     # Your code here
-    print("Starting get winners for year={}".format(year))
+    print("Starting get_winners for year={}".format(year))
     return helpers.winners.get_winner(year)
 
 def get_presenters(year):
@@ -71,7 +49,8 @@ def get_presenters(year):
     names as keys, and each entry a list of strings. Do NOT change the
     name of this function or what it returns.'''
     # Your code here
-    return presenters.get_presenters(year)
+    print("Starting get_presenters for year={}".format(year))
+    return helpers.presenters.get_presenters(year)
 
 def sentiment(year):
     sia = SentimentIntensityAnalyzer()
@@ -87,8 +66,7 @@ def sentiment(year):
     return sentiment
 
 def bestdressed(year):
-    hashtag = "#redcarpet"
-    return bestdressed
+    return helpers.bestdressed.bestdressed(year)
 
 def pre_ceremony():
     '''This function loads/fetches/processes any data your program
@@ -96,8 +74,6 @@ def pre_ceremony():
     plain text file. It is the first thing the TA will run when grading.
     Do NOT change the name of this function or what it returns.'''
     # Your code here
-    TP.get_tweets(2013)
-    TP.get_tweets(2015)
     print("Pre-ceremony processing complete.")
     return
 
