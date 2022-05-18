@@ -7,6 +7,6 @@ This is an NLP project on identifying hosts; awards; presenters, nominees, and w
 
 ## HOW TO RUN
 
-First clone this repository and install the necessary packages, achieved by running `pip install -r requirements.txt`. Next, include `gg2013.json` and `gg2015.json`, the datasets of Twitter tweets, within the directory.
+First clone this repository. We recommend creating a virtual enviornment for the packages required in the project. To install the necessary packages, run `pip install -r requirements.txt`. Next, include `gg2013.json` and `gg2015.json`, the datasets of Twitter tweets, within the directory.
 
 To see autograder results, run `python autograder.py`.
