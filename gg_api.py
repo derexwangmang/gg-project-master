@@ -1,9 +1,10 @@
 import helpers.hosts
 import helpers.awards
-import helpers.winners
+import helpers.winners_given_nominees
 import helpers.presenters
 import helpers.nominees
 import helpers.bestdressed
+import helpers.sentiment
 
 from nltk.sentiment import SentimentIntensityAnalyzer
 import helpers.tweet_preprocessing as TP
@@ -24,7 +25,6 @@ def get_hosts(year):
 def get_awards(year):
     '''Awards is a list of strings. Do NOT change the name
     of this function or what it returns.'''
-    # Your code here
     print("Starting get_awards for year={}".format(year))
     return helpers.awards.get_awards(TWEETS[year]) 
 
@@ -32,7 +32,6 @@ def get_nominees(year):
     '''Nominees is a dictionary with the hard coded award
     names as keys, and each entry a list of strings. Do NOT change
     the name of this function or what it returns.'''
-    # Your code here
     print("Starting get_nominees for year={}".format(year))
     return helpers.nominees.get_nominees(year)
 
@@ -40,30 +39,19 @@ def get_winner(year):
     '''Winners is a dictionary with the hard coded award
     names as keys, and each entry containing a single string.
     Do NOT change the name of this function or what it returns.'''
-    # Your code here
     print("Starting get_winners for year={}".format(year))
-    return helpers.winners.get_winner(year)
+    return helpers.winners_given_nominees.get_winner(year)
 
 def get_presenters(year):
     '''Presenters is a dictionary with the hard coded award
     names as keys, and each entry a list of strings. Do NOT change the
     name of this function or what it returns.'''
-    # Your code here
     print("Starting get_presenters for year={}".format(year))
     return helpers.presenters.get_presenters(year)
 
+##bonus requirements
 def sentiment(year):
-    sia = SentimentIntensityAnalyzer()
-    siaps = sia.polarity_scores("Wow, NLTK is really powerful!")
-    # print(siaps)
-
-    def is_positive(tweet: str) -> bool:
-        """True if tweet has positive compound sentiment, False otherwise."""
-        return sia.polarity_scores(tweet)["compound"] > 0
-
-    # for tweet in tweets:
-    #     print(">", is_positive(tweet), tweet)
-    return sentiment
+    return helpers.sentiment.get_sentiment(year)
 
 def bestdressed(year):
     return helpers.bestdressed.bestdressed(year)
@@ -73,7 +61,6 @@ def pre_ceremony():
     will use, and stores that data in your DB or in a json, csv, or
     plain text file. It is the first thing the TA will run when grading.
     Do NOT change the name of this function or what it returns.'''
-    # Your code here
     print("Pre-ceremony processing complete.")
     return
 

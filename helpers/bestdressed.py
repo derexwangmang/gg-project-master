@@ -1,9 +1,10 @@
 import re
 from collections import Counter
 from textblob import TextBlob
+from nltk.sentiment import SentimentIntensityAnalyzer
 
 def get_tweets(year):
-    f = open("processedtweets{}.txt".format(year), 'r')
+    f = open("../processedtweets{}.txt".format(year), 'r')
     tweets = f.readlines()
     return tweets
 
@@ -16,7 +17,7 @@ def bestdressed(year):
     for tweet in redcarpet_tweets:
         name = name_pattern.findall(tweet)
         senti = TextBlob(tweet).sentiment[0]
-        badwords = ["ugly", "horrible", "bad", "dislike", "hate", "gross", "worst", "fat","cakey","unflattering"]
+        badwords = ["ugly", "horrible", "bad", "dislike", "hate", "gross", "worst", "fat","cakey","unflattering", "skimpy", "plastic", "dead", "awkward", "distracting", "overdone"]
         if senti > 0:
             bestdressed.update(name)
         elif any(word in tweet for word in badwords):
@@ -29,8 +30,11 @@ def bestdressed(year):
     for (key,value) in worstdressed.most_common(1):
         worstdressedperson = key
 
-    result = bestdressedperson + " was the best dressed! " + worstdressedperson + " was the worst dressed!"
+    result = bestdressedperson + " was the best dressed! " + worstdressedperson + " was the worst dressed! in " + str(year)
     return result
 
 # bestdressed(2013)
 # bestdressed(2015)
+
+# print(bestdressed(2013))
+# print(bestdressed(2015))

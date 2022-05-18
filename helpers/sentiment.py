@@ -5,7 +5,7 @@ from collections import Counter
 from textblob import TextBlob
 
 def get_tweets(year):
-    f = open("processedtweets{}.txt".format(year), 'r')
+    f = open("../processedtweets{}.txt".format(year), 'r')
     tweets = f.readlines()
     return tweets
 
@@ -75,9 +75,8 @@ def get_sentiment(year):
                 if winner not in winnersenti.keys():
                     winnersenti[winner] = Counter()
                 name = winner.split()
-                
-                contains = all(n in tweet.lower() for n in name)
 
+                contains = all(n in tweet.lower() for n in name)
                 if contains:
                     adj = getadj(name, tweet)
                     winnersenti[winner].update(adj)
