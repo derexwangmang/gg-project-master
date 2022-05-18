@@ -77,11 +77,13 @@ def get_presenters(year):
             targets = list(awards[key].items())
             targets.sort(key = lambda tup: tup[1], reverse=True)
             #print(key, targets)
-            res = [targets.pop(0)[0]]
-            count = 1
+            res = []
+            count = 2
             while count > 0 and targets:
                 potential = targets.pop(0)[0]
-                if Levenshtein.ratio(res[-1],potential) > .5:
+                if targets and Levenshtein.ratio(targets[0][0],potential) > .5:
+                    res.append(potential)
+                    targets.pop(0)
                     continue
                 else:
                     if potential in seen and len(targets) >= 1:
@@ -93,7 +95,6 @@ def get_presenters(year):
             seen += res
         else:
             result[key] = []
-    #print(result)
     return result
 
 def get_filtered_awards(year):
@@ -175,6 +176,10 @@ def map_presenters(year, presenters):
    
 
 
+<<<<<<< HEAD
 print(get_presenters(2013))
+=======
+#get_presenters(2013, {})
+>>>>>>> eeef188cda6e37ec5a5743b4ba3e40af45b540c4
 #map_presenters(2013)
 #get_presenters_1(2013)

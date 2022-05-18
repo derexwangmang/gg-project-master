@@ -10,6 +10,8 @@ import GenerateTweetsByAward as gtba
 from helpers.tweet_preprocessing import clean
 from nltk.corpus import stopwords
 from nltk.corpus import names
+import nltk
+nltk.download('names')
 
 AWARD_STOP_WORDS = set(['by', 'an', 'in', 'a', 'performance', 'or', 'role', 'made', 'for', '-', ','])
 TWEET_STOP_WORDS = set(stopwords.words('english'))

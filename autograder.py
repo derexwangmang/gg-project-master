@@ -219,7 +219,7 @@ def main(years, grading):
 
         if "winner" in grading:
             del scores[y]['winner']['completeness']
-    pprint(scores)
+    print(scores)
 
 if __name__ == '__main__':
     years = ['2013', '2015']
