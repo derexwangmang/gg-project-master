@@ -6,7 +6,6 @@ from nltk import bigrams
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.util import everygrams
 import Levenshtein
-import GenerateTweetsByAward as gtba
 from helpers.tweet_preprocessing import clean
 from nltk.corpus import stopwords
 from nltk.corpus import names
@@ -53,7 +52,6 @@ def get_filtered_awards(year):
     return clean_awards
 
 def get_nominees(year):
-    gtba.generateTweetsByAward(year)
     award_mappings = get_filtered_awards(year)
     clean_awards = award_mappings.keys()
 

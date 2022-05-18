@@ -5,7 +5,7 @@ from collections import Counter
 from textblob import TextBlob
 
 def get_tweets(year):
-    f = open("../processedtweets{}.txt".format(year), 'r')
+    f = open("processedtweets{}.txt".format(year), 'r')
     tweets = f.readlines()
     return tweets
 

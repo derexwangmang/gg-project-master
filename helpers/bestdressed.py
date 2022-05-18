@@ -4,7 +4,7 @@ from textblob import TextBlob
 from nltk.sentiment import SentimentIntensityAnalyzer
 
 def get_tweets(year):
-    f = open("../processedtweets{}.txt".format(year), 'r')
+    f = open("processedtweets{}.txt".format(year), 'r')
     tweets = f.readlines()
     return tweets
 

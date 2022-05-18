@@ -52,9 +52,11 @@ def get_presenters(year):
 
 ##bonus requirements
 def sentiment(year):
+    print("[BONUS] Starting sentiment for year={}".format(year))
     return helpers.sentiment.get_sentiment(year)
 
 def bestdressed(year):
+    print("[BONUS] Starting best_dressed for year={}".format(year))
     return helpers.bestdressed.bestdressed(year)
 
 def pre_ceremony():
@@ -62,6 +64,20 @@ def pre_ceremony():
     will use, and stores that data in your DB or in a json, csv, or
     plain text file. It is the first thing the TA will run when grading.
     Do NOT change the name of this function or what it returns.'''
+
+    ''' 
+    get_tweets: pre-processes our tweets to make them more machine readable,
+        also packages tweets into award-specific files (in /awardsandfilters/ sub-dir)
+        to the best of its ability
+    
+    If testing pre-ceremony for full run time, delete all files in /awardsandfilters/
+    EXCEPT for 'awardsandfilters.txt'. Also delete 'processedtweets2013.txt' and
+    'processedtweets2015.txt'
+    '''
+
+    get_tweets(2013)
+    get_tweets(2015)
+
     print("Pre-ceremony processing complete.")
     return
 
@@ -71,16 +87,25 @@ def main():
     and then run gg_api.main(). This is the second thing the TA will
     run when grading. Do NOT change the name of this function or
     what it returns.'''
+
+    '''
+    **We expect `gg2013.json` and `gg2015.json` to exist in the main directory of this project when you run
+    `pre_ceremony()` or `main()`**
+    '''
+
     # Your code here
     def get_year():
         while True:
-            year = input("Enter the year you'd like to examine:")
+            year = input("Enter the year you'd like to examine: ")
             if os.path.exists("gg%s.json" %year):
-                print("You've selected ", str(year), "! Gathering data now...")
+                print("You've selected Golden Globes in the year {}! Gathering data now...\n".format(year))
                 return year
             else:
                 print("Not a valid year. Please try again")
     
+    def format_name(name):
+        return " ".join([x[0].upper() + x[1:] if len(x) > 1 else x.upper() for x in name.split(" ")])
+
     year = get_year()
 
     nominees = get_nominees(year)
@@ -90,29 +115,53 @@ def main():
     redcarpet = bestdressed(year)
     senti = sentiment(year)
 
-    result = "Hosts: " + hosts[0] + " " + hosts[1] + "\n"
-    hostsenti = ', '.join(senti.get("hosts"))
-    result += "Sentiment: " + hostsenti + "\n"
-    awardoutputs = ""
-    for award in OFFICIAL_AWARDS:
-        awardoutputs = awardoutputs + "Award: " + award
-        presenter = presenters.get(award)[0]
-        nomineelist = ', '.join(nominees.get(award))
-        winner = winners.get(award)[0]
-        if winner in senti.keys():
-            winnersenti = senti.get(winner.lower())
-            winnersentiment = ', '.join(winnersenti)
-        awardoutputs += "Presenters: " + presenter + "\n"
+    print('\n')
+    result = "="*10 + "FOR {}".format(year) + "="*10 + "\n\n\n"
+
+    # HOSTS
+    result += "Hosts: " + ", ".join(hosts) + "\n"
+    hostsenti = ', '.join(format_name(x[0]) for x in senti.get("hosts"))
+    result += "Host Sentiment: " + hostsenti + "\n\n"
+
+    # PRESENTERS, NOMINEES AND WINNERS
+    awardoutputs = "===== PRESENTERS, NOMINEES, AND WINNERS (+ some sentiment analysis) =====\n\n"
+    for i in range(len(OFFICIAL_AWARDS)):
+        awardoutputs = awardoutputs + "=== " + OFFICIAL_AWARDS[i].upper() + " ===\n"
+
+        presenter = "NONE FOUND 😔"
+        if presenters.get(OFFICIAL_AWARDS[i]):
+            presenter = format_name(presenters.get(OFFICIAL_AWARDS[i])[0])
+
+        nomineelist = "NONE FOUND 😔"
+        if nominees.get(OFFICIAL_AWARDS[i]):
+            nomineelist = ', '.join(format_name(name) for name in nominees.get(OFFICIAL_AWARDS[i]))
+            
+        winner = "NOT FOUND 😔"
+        if winners.get(OFFICIAL_AWARDS[i]):        
+            winner = format_name(winners.get(OFFICIAL_AWARDS[i]))
+        
+        awardoutputs += "Presenter(s): " + presenter + "\n"
         awardoutputs += "Nominees: " + nomineelist + "\n"
         awardoutputs += "Winner: " + winner + "\n"
-        if winnersenti:
+
+        if winner in senti.keys():
+            winnersenti = senti.get(winner.lower())
+            winnersentiment = ', '.join(x[0] for x in winnersenti)
             awardoutputs += "Sentiment around winner: " + winnersentiment + "\n"
 
-
+        awardoutputs += "\n"
         result += awardoutputs
 
-    return result
-    
+    result += "=== [BONUS] RED CARPET ===\n" + redcarpet + "\n"
+
+    print(result)
+
+    with open("results{}.txt".format(year), 'w') as f:
+        f.write(result)
+        print("Results are also written to results{}.txt!".format(year))
+
+    return 
+
 
 if __name__ == '__main__':
     pre_ceremony()
