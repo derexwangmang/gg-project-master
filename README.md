@@ -10,3 +10,7 @@ This is an NLP project on identifying hosts; awards; presenters, nominees, and w
 First clone this repository. We recommend creating a virtual enviornment for the packages required in the project. To install the necessary packages, run `pip install -r requirements.txt`. Next, include `gg2013.json` and `gg2015.json`, the datasets of Twitter tweets, within the main directory.
 
 To see autograder results, run `python3 autograder.py`.
+
+## GITHUB Repository
+
+The Github repository can be located [here](https://github.com/derexwangmang/gg-project-master).
