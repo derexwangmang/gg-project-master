@@ -116,10 +116,10 @@ def main():
     senti = sentiment(year)
 
     print('\n')
-    result = "="*10 + "FOR {}".format(year) + "="*10 + "\n\n\n"
+    result = "="*10 + " GOLDEN GLOBES {} ".format(year) + "="*10 + "\n\n"
 
     # HOSTS
-    result += "Hosts: " + ", ".join(hosts) + "\n"
+    result += "*** HOSTS ***\n" + ", ".join(hosts) + "\n"
     hostsenti = ', '.join(format_name(x[0]) for x in senti.get("hosts"))
     result += "Host Sentiment: " + hostsenti + "\n\n"
 
@@ -150,18 +150,22 @@ def main():
             awardoutputs += "Sentiment around winner: " + winnersentiment + "\n"
 
         awardoutputs += "\n"
-        result += awardoutputs
-
-    result += "=== [BONUS] RED CARPET ===\n" + redcarpet + "\n"
+    
+    result += awardoutputs
+    
+    result += "=== [BONUS] RED CARPET ===\nBest dressed: {}\nWorst dressed: {}\n".format(redcarpet[0], redcarpet[1]) 
 
     print(result)
 
-    with open("results{}.txt".format(year), 'w') as f:
-        f.write(result)
-        print("Results are also written to results{}.txt!".format(year))
+
+    f = open("results{}.txt".format(year), 'w')
+        
+    f.write(result)
+    f.close()
+            
+    print("Results are also written to results{}.txt!".format(year))
 
     return 
-
 
 if __name__ == '__main__':
     pre_ceremony()
