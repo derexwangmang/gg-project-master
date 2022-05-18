@@ -9,12 +9,19 @@ import Levenshtein
 import GenerateTweetsByAward as gtba
 from helpers.tweet_preprocessing import clean
 from nltk.corpus import stopwords
+from nltk.corpus import names
+import nltk
+nltk.download('names')
 
 AWARD_STOP_WORDS = set(['by', 'an', 'in', 'a', 'performance', 'or', 'role', 'made', 'for', '-', ','])
 TWEET_STOP_WORDS = set(stopwords.words('english'))
 TWEET_STOP_WORDS.update(["the", "golden", "globes", "for", "to", "and"])
 TWEET_STOP_WORDS.remove("should")
 TWEET_STOP_WORDS.remove("of")
+TWEET_STOP_WORDS.update(["congrats", "series"])
+
+PEOPLE_NAMES = set(names.words('male.txt'))
+PEOPLE_NAMES.update(set(names.words('female.txt')))
 
 OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'best performance by an actress in a motion picture - drama', 'best performance by an actor in a motion picture - drama', 'best motion picture - comedy or musical', 'best performance by an actress in a motion picture - comedy or musical', 'best performance by an actor in a motion picture - comedy or musical', 'best animated feature film', 'best foreign language film', 'best performance by an actress in a supporting role in a motion picture', 'best performance by an actor in a supporting role in a motion picture', 'best director - motion picture', 'best screenplay - motion picture', 'best original score - motion picture', 'best original song - motion picture', 'best television series - drama', 'best performance by an actress in a television series - drama', 'best performance by an actor in a television series - drama', 'best television series - comedy or musical', 'best performance by an actress in a television series - comedy or musical', 'best performance by an actor in a television series - comedy or musical', 'best mini-series or motion picture made for television', 'best performance by an actress in a mini-series or motion picture made for television', 'best performance by an actor in a mini-series or motion picture made for television', 'best performance by an actress in a supporting role in a series, mini-series or motion picture made for television', 'best performance by an actor in a supporting role in a series, mini-series or motion picture made for television']
 
@@ -60,6 +67,8 @@ def get_nominees(year):
                 # print("ORIGINAL TWEET={}".format(tweet))
                 # print(word_tokenize(clean_award))
                 tweet = ' '.join([token for token in word_tokenize(tweet) if token.lower() not in TWEET_STOP_WORDS and token.lower() not in set(word_tokenize(clean_award))])
+                titles = re.compile('[A-Z][a-z]+')
+                # potential_nominees = re.findall(titles, tweet)
                 # Filter out tweets talking about winner
                 # if 'winner' in tweet or "wins" in tweet or "goes" in tweet or "won" in tweet:
                 # print("TWEET", tweet)
@@ -87,10 +96,14 @@ def get_nominees(year):
                     #     people_names.append([sentence[wins_index+6:], list(bigrams(tokens))])
                     #     other_names.append([sentence[wins_index+6:], list(everygrams(tokens, max_len=3))])
 
+                    nominee_candidate = re.findall(titles, tweet)
+                    # tokens = word_tokenize(sentence)
+                    people_names.append([sentence, list(bigrams(nominee_candidate))])
+                    # print(list(bigrams(nominee_candidate)))
 
-                    tokens = word_tokenize(sentence)
-                    people_names.append([sentence, list(bigrams(tokens))])
-                    other_names.append([sentence, list(everygrams(tokens, max_len=3))])
+                    tweet_without_people_names = ' '.join([token for token in word_tokenize(tweet) if token not in PEOPLE_NAMES])
+                    nominee_candidate = re.findall(titles, tweet_without_people_names)
+                    other_names.append([sentence, list(everygrams(nominee_candidate, max_len=3))])
 
 
                     # for award in clean_awards:
@@ -149,8 +162,8 @@ def get_nominees(year):
 
             # print("nominee Candidates for AWARD={}, CHOSE={}".format(collapsed_potential_nominees[award].most_common(10), collapsed_potential_nominees[award].most_common(1)[0][0]))
             nominees[award_name] = []
-            previous_count = -1
-            for nominee in collapsed_potential_nominees[award].most_common(4):
+            # Ignore most frequent phrase (might be winner)
+            for nominee in collapsed_potential_nominees[award].most_common(4)[1:]:
                 nominees[award_name].append(nominee[0])
                 # if len(nominees) < 5:
                 #     nominees[award_name].append(nominee[0])
@@ -165,5 +178,5 @@ def get_nominees(year):
 
         # print("\n")
 
-    print("Nominees found ", nominees)
+    # print("Nominees found ", nominees)
     return nominees

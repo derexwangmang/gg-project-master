@@ -1,6 +1,5 @@
 import json
 import re
-import nltk
 from collections import Counter
 from nltk.corpus import stopwords
 from difflib import SequenceMatcher
@@ -26,7 +25,6 @@ def get_tweets(year):
     return tweet_text_lst
 
 def get_presenters(year):
-    print("running")
     presenter_pattern = re.compile('present')
     tweets_containing_present = list(filter(presenter_pattern.search, get_tweets(year)))
     awards = dict.fromkeys(OFFICIAL_AWARDS, None)

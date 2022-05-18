@@ -164,7 +164,7 @@ def get_winner(year):
 
         # print("\n")
 
-    print(winners)
+    # print(winners)
     return winners    
 
 

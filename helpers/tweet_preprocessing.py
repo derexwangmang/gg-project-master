@@ -128,4 +128,4 @@ def fixMentions(text):
 
 
 #UNCOMMENT ME FOR TESTING "python3 tweet_preprocessing.py > tweets2013.txt"
-get_tweets(2013)
+# get_tweets(2013)
