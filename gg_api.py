@@ -6,6 +6,7 @@ import helpers.nominees
 import helpers.bestdressed
 import helpers.sentiment
 
+import os.path
 from nltk.sentiment import SentimentIntensityAnalyzer
 import helpers.tweet_preprocessing as TP
 
@@ -71,10 +72,47 @@ def main():
     run when grading. Do NOT change the name of this function or
     what it returns.'''
     # Your code here
-    return
+    def get_year():
+        while True:
+            year = input("Enter the year you'd like to examine:")
+            if os.path.exists("gg%s.json" %year):
+                print("You've selected ", str(year), "! Gathering data now...")
+                return year
+            else:
+                print("Not a valid year. Please try again")
+    
+    year = get_year()
+
+    nominees = get_nominees(year)
+    presenters = get_presenters(year)
+    hosts = get_hosts(year)
+    winners = get_winner(year)
+    redcarpet = bestdressed(year)
+    senti = sentiment(year)
+
+    result = "Hosts: " + hosts[0] + " " + hosts[1] + "\n"
+    hostsenti = ', '.join(senti.get("hosts"))
+    result += "Sentiment: " + hostsenti + "\n"
+    awardoutputs = ""
+    for award in OFFICIAL_AWARDS:
+        awardoutputs = awardoutputs + "Award: " + award
+        presenter = presenters.get(award)[0]
+        nomineelist = ', '.join(nominees.get(award))
+        winner = winners.get(award)[0]
+        if winner in senti.keys():
+            winnersenti = senti.get(winner.lower())
+            winnersentiment = ', '.join(winnersenti)
+        awardoutputs += "Presenters: " + presenter + "\n"
+        awardoutputs += "Nominees: " + nomineelist + "\n"
+        awardoutputs += "Winner: " + winner + "\n"
+        if winnersenti:
+            awardoutputs += "Sentiment around winner: " + winnersentiment + "\n"
 
 
+        result += awardoutputs
 
+    return result
+    
 
 if __name__ == '__main__':
     pre_ceremony()

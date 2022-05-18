@@ -15,7 +15,7 @@ OFFICIAL_AWARDS = ['cecil b. demille award', 'best motion picture - drama', 'bes
 
 
 def get_tweets(year):
-    with open('gg{}.json'.format(year)) as f:
+    with open('../gg{}.json'.format(year)) as f:
         tweet_information = json.load(f)
 
         tweet_text_lst = []
@@ -175,6 +175,6 @@ def map_presenters(year, presenters):
    
 
 
-get_presenters(2013)
+print(get_presenters(2013))
 #map_presenters(2013)
 #get_presenters_1(2013)
