@@ -20,4 +20,8 @@ By running `python3 gg_api.py`, you will be able to run `pre_ceremony()`, which 
 
 If you would like to test the performance of `pre_ceremony()`, we recommend that you first delete `processedtweets2013.txt` and `processedtweets2015.txt` in the main directory, and all files **except** for `awardsandfilters.txt` in the subdirectory `awardsandfilters/`. `pre_ceremony()` will generate fresh copies of those files.
 
-To see autograder results, run `python3 autograder.py`.
+To see autograder results, run `python3 autograder.py`. Expected results are within `autograder_results.txt`.
+
+## GITHUB Repository
+
+The Github repository can be located [here](https://github.com/derexwangmang/gg-project-master).
