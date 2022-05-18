@@ -3,16 +3,11 @@ import re
 from collections import Counter
 import helpers.awards
 import awards
-<<<<<<< HEAD
-# import helpers.winners
-import helpers.winners_given_nominees
-=======
 import helpers.winners
-import presenters
+import newpresenters
 import helpers.winners_given_nominees
 
 import helpers.nominees
->>>>>>> c4be7af935c13ced9b68a8dafb9aa29362948616
 
 from nltk.corpus import stopwords as sw
 from nltk.tokenize import wordpunct_tokenize
@@ -61,7 +56,7 @@ def get_nominees(year):
     the name of this function or what it returns.'''
     # Your code here
     print("Starting get_nominees for year={}".format(year))
-    return helpers.nominees.get_nominees(year)
+    return newpresenters.get_presenters(year)
 
 def get_winner(year):
     '''Winners is a dictionary with the hard coded award
@@ -76,7 +71,7 @@ def get_presenters(year):
     names as keys, and each entry a list of strings. Do NOT change the
     name of this function or what it returns.'''
     # Your code here
-    return presenters.get_presenters(year)
+    return newpresenters.get_presenters(year)
 
 def sentiment(year):
     sia = SentimentIntensityAnalyzer()
